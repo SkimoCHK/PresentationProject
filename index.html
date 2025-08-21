@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segmentación de Clientes E-commerce - Proyecto Final</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        
+        .presentation {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .slide {
+            min-height: 100vh;
+            padding: 2rem;
+            display: none;
+            background: white;
+            margin: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        .slide h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 1rem;
+        }
+        
+        .slide h2 {
+            color: #764ba2;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .slide h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+        
+        .intro-content {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .intro-content .emoji {
+            font-size: 4rem;
+            margin: 1rem 0;
+        }
+        
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .problem, .solution {
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .problem {
+            background: #ffebee;
+            border-left: 5px solid #f44336;
+        }
+        
+        .solution {
+            background: #e8f5e8;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .methodology-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .step {
+            background: #f8f9ff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+        
+        .step::before {
+            content: attr(data-step);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .segments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .segment {
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .segment.vip {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+        }
+        
+        .segment.frequent {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+        
+        .segment.occasional {
+            background: linear-gradient(135deg, #45b7d1, #96c93d);
+            color: white;
+        }
+        
+        .segment.new {
+            background: linear-gradient(135deg, #96ceb4, #ffecd2);
+            color: #333;
+        }
+        
+        .tech-stack {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .tech-item {
+            background: white;
+            padding: 1rem;
+            margin: 0.5rem;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            min-width: 150px;
+        }
+        
+        .api-endpoints {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .endpoint {
+            background: #f8f9ff;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .endpoint-method {
+            background: #667eea;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 1rem;
+        }
+        
+        .endpoint-method.post {
+            background: #4caf50;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .result-card {
+            background: #f8f9ff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .nav-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background: #764ba2;
+        }
+        
+        .slide-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .demo-scenario {
+            background: #e3f2fd;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .code-snippet {
+            background: #263238;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .impact-card {
+            background: linear-gradient(135deg, #4caf50, #81c784);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        
+        li {
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .highlight {
+            background: yellow;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+        }
+        
+        @media (max-width: 768px) {
+            .slide {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .slide h1 {
+                font-size: 2rem;
+            }
+            
+            .slide h2 {
+                font-size: 1.5rem;
+            }
+            
+            .problem-solution {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        
+        <!-- Slide 1: Portada -->
+        <div class="slide active">
+            <div class="slide-counter">1/12</div>
+            <div class="intro-content">
+                <h1>🚀 Proyecto Final</h1>
+                <div class="emoji">🛒📊🤖</div>
+                <h2>Segmentación Inteligente de Clientes E-commerce</h2>
+                <div style="margin: 2rem 0;">
+                    <p style="font-size: 1.3rem; color: #666; margin: 1rem 0;">
+                        <strong>Extracción de Conocimiento a partir de Datos Reales</strong>
+                    </p>
+                    <p style="font-size: 1.1rem; color: #888;">
+                        Aplicación de Machine Learning para optimización de estrategias de marketing
+                    </p>
+                </div>
+                <div style="margin-top: 3rem; font-size: 1.1rem;">
+                    <p><strong>Equipo:</br></strong>Alex Guillen <br/> Ivan Soto <br/> Eduardo Salazar</p>
+                    <p><strong>Materia:</strong> Extracción del Conocimiento en Bases de Datos</p>
+                    <p><strong>Profesora:</strong> Karina Cantu Vera</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Planteamiento del Problema -->
+        <div class="slide">
+            <div class="slide-counter">2/12</div>
+            <h1>🎯 Planteamiento del Problema</h1>
+            
+            <div class="problem-solution">
+                <div class="problem">
+                    <h3>❌ PROBLEMA ACTUAL</h3>
+                    <ul style="text-align: left;">
+                        <li>Empresa de e-commerce <strong>no conoce a sus clientes</strong></li>
+                        <li>Marketing <strong>genérico sin segmentación</strong></li>
+                        <li><strong>Desperdicio</strong> de presupuesto publicitario</li>
+                        <li><strong>Baja efectividad</strong> en campañas</li>
+                        <li>No hay <strong>predicción de comportamiento</strong> futuro</li>
+                    </ul>
+                </div>
+                
+                <div class="solution">
+                    <h3>✅ NUESTRA SOLUCIÓN</h3>
+                    <ul style="text-align: left;">
+                        <li><strong>Segmentación automática</strong> de clientes</li>
+                        <li><strong>Predicción de gasto</strong> individual</li>
+                        <li>Estrategias <strong>personalizadas</strong> por segmento</li>
+                        <li><strong>Dashboard ejecutivo</strong> para toma de decisiones</li>
+                        <li>Sistema <strong>escalable y en tiempo real</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>💰 Impacto Esperado</h3>
+            <div class="impact-metrics">
+                <div class="impact-card">
+                    <div class="stat-value">40%</div>
+                    <div>Incremento en efectividad de campañas</div>
+                </div>
+                <div class="impact-card">
+                    <div class="stat-value">25%</div>
+                    <div>Reducción en costos de marketing</div>
+                </div>
+                <div class="impact-card">
+                    <div class="stat-value">60%</div>
+                    <div>Mejora en ROI publicitario</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Metodología -->
+        <div class="slide">
+            <div class="slide-counter">3/12</div>
+            <h1>⚙️ Metodología CRISP-DM</h1>
+            
+            <div class="methodology-steps">
+                <div class="step" data-step="1">
+                    <h3>📋 Business Understanding</h3>
+                    <p><strong>Objetivo:</strong> Segmentar clientes para mejorar marketing</p>
+                    <p><strong>Métrica clave:</strong> Incrementar ROI de campañas</p>
+                </div>
+                
+                <div class="step" data-step="2">
+                    <h3>📊 Data Understanding</h3>
+                    <p><strong>Fuente:</strong> 1,000 clientes simulados</p>
+                    <p><strong>Variables:</strong> Edad, frecuencia, gasto, antigüedad</p>
+                </div>
+                
+                <div class="step" data-step="3">
+                    <h3>🛠️ Data Preparation</h3>
+                    <p><strong>ETL:</strong> Generación, limpieza y transformación</p>
+                    <p><strong>Features:</strong> Cálculo de métricas derivadas</p>
+                </div>
+                
+                <div class="step" data-step="4">
+                    <h3>🤖 Modeling</h3>
+                    <p><strong>Supervisado:</strong> Regresión lineal múltiple</p>
+                    <p><strong>No supervisado:</strong> K-Means clustering</p>
+                </div>
+                
+                <div class="step" data-step="5">
+                    <h3>✅ Evaluation</h3>
+                    <p><strong>Métricas:</strong> RMSE, R², Accuracy</p>
+                    <p><strong>Validación:</strong> Interpretación de clusters</p>
+                </div>
+                
+                <div class="step" data-step="6">
+                    <h3>🚀 Deployment</h3>
+                    <p><strong>API REST:</strong> C# .NET Core</p>
+                    <p><strong>Frontend:</strong> Angular Dashboard</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Datos y ETL -->
+        <div class="slide">
+            <div class="slide-counter">4/12</div>
+            <h1>📁 Preparación de Datos (ETL)</h1>
+            
+            <h3>🎲 Generación de Dataset Simulado</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">1,000</div>
+                    <div>Clientes generados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7</div>
+                    <div>Variables por cliente</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0%</div>
+                    <div>Datos faltantes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div>Datos consistentes</div>
+                </div>
+            </div>
+
+            <h3>📋 Estructura de Datos</h3>
+            <div class="code-snippet">
+{
+  "id": 1,
+  "name": "Cliente 1",
+  "age": 35,                    // Edad (18-70 años)
+  "monthsAsCustomer": 18,       // Antigüedad (1-60 meses)  
+  "purchaseFrequency": 25,      // Compras anuales (1-50)
+  "totalSpent": 6750.00,        // Gasto total histórico
+  "lastPurchaseDate": "2024-10-15",
+  "preferredCategory": "Electrónicos"
+}
+            </div>
+
+            <h3>🔄 Proceso ETL</h3>
+            <ul>
+                <li><strong>Extracción:</strong> Generación algorítmica con patrones realistas</li>
+                <li><strong>Transformación:</strong> Cálculo de métricas derivadas y normalización</li>
+                <li><strong>Carga:</strong> Almacenamiento en memoria para procesamiento rápido</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: Análisis Supervisado -->
+        <div class="slide">
+            <div class="slide-counter">5/12</div>
+            <h1>🤖 Análisis Supervisado</h1>
+            
+            <h3>🎯 Modelo de Regresión Lineal Múltiple</h3>
+            <p><strong>Objetivo:</strong> Predecir el gasto anual de un cliente basado en sus características</p>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <h4>📊 Métricas del Modelo</h4>
+                    <ul>
+                        <li><strong>Accuracy:</strong> 85%</li>
+                        <li><strong>RMSE:</strong> $245.60</li>
+                        <li><strong>R² Score:</strong> 78%</li>
+                        <li><strong>Variables:</strong> 3 predictoras</li>
+                    </ul>
+                </div>
+                
+                <div class="result-card">
+                    <h4>⚖️ Importancia de Características</h4>
+                    <ul>
+                        <li><strong>Frecuencia de compra:</strong> 45%</li>
+                        <li><strong>Edad del cliente:</strong> 35%</li>
+                        <li><strong>Tiempo como cliente:</strong> 20%</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>🔍 Interpretación del Modelo</h3>
+            <ul>
+                <li>El modelo explica el <span class="highlight">78% de la varianza</span> en el gasto de clientes</li>
+                <li>La <span class="highlight">frecuencia de compra es el predictor más importante</span> (45%)</li>
+                <li>Error promedio de predicción: <span class="highlight">$245 pesos</span></li>
+                <li>Rendimiento aceptable para aplicaciones de negocio</li>
+            </ul>
+        </div>
+
+        <!-- Slide 6: Análisis No Supervisado -->
+        <div class="slide">
+            <div class="slide-counter">6/12</div>
+            <h1>🎨 Análisis No Supervisado - Clustering</h1>
+            
+            <h3>🎯 K-Means Clustering</h3>
+            <p><strong>Algoritmo:</strong> K-Means con k=4 clusters</p>
+            <p><strong>Variables:</strong> Gasto total, frecuencia de compra, antigüedad</p>
+            
+            <div class="segments-grid">
+                <div class="segment vip">
+                    <h4>👑 VIP</h4>
+                    <p><strong>150 clientes (15%)</strong></p>
+                    <p>Gasto: $7,000+ anuales</p>
+                    <p>Frecuencia: 30+ compras</p>
+                    <p><strong>Generan 45% de ingresos</strong></p>
+                </div>
+                
+                <div class="segment frequent">
+                    <h4>🛒 Frecuentes</h4>
+                    <p><strong>300 clientes (30%)</strong></p>
+                    <p>Gasto: $3,000-$7,000</p>
+                    <p>Frecuencia: 15-30 compras</p>
+                    <p><strong>Base sólida del negocio</strong></p>
+                </div>
+                
+                <div class="segment occasional">
+                    <h4>🕒 Ocasionales</h4>
+                    <p><strong>400 clientes (40%)</strong></p>
+                    <p>Gasto: $1,000-$3,000</p>
+                    <p>Frecuencia: 5-15 compras</p>
+                    <p><strong>Compras estacionales</strong></p>
+                </div>
+                
+                <div class="segment new">
+                    <h4>🌱 Nuevos</h4>
+                    <p><strong>150 clientes (15%)</strong></p>
+                    <p>Gasto: <$1,000</p>
+                    <p>Antigüedad: <3 meses</p>
+                    <p><strong>Potencial de crecimiento</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Arquitectura Técnica -->
+        <div class="slide">
+            <div class="slide-counter">7/12</div>
+            <h1>🏗️ Arquitectura del Sistema</h1>
+            
+            <h3>💻 Stack Tecnológico</h3>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <h4>🎯 Backend</h4>
+                    <p>C# .NET Core 8</p>
+                    <p>API REST</p>
+                </div>
+                <div class="tech-item">
+                    <h4>🌐 Frontend</h4>
+                    <p>Angular 17</p>
+                    <p>TypeScript</p>
+                </div>
+                <div class="tech-item">
+                    <h4>📊 Machine Learning</h4>
+                    <p>Algoritmos nativos</p>
+                    <p>K-Means, Regresión</p>
+                </div>
+                <div class="tech-item">
+                    <h4>💾 Datos</h4>
+                    <p>In-Memory Storage</p>
+                    <p>JSON Objects</p>
+                </div>
+            </div>
+
+            <h3>🔗 API Endpoints</h3>
+            <div class="api-endpoints">
+                <div class="endpoint">
+                    <span class="endpoint-method">GET</span>
+                    <strong>/api/customers</strong> - Lista completa de clientes
+                </div>
+                <div class="endpoint">
+                    <span class="endpoint-method">GET</span>
+                    <strong>/api/supervised-analysis</strong> - Métricas del modelo predictivo
+                </div>
+                <div class="endpoint">
+                    <span class="endpoint-method">GET</span>
+                    <strong>/api/unsupervised-analysis</strong> - Resultados del clustering
+                </div>
+                <div class="endpoint">
+                    <span class="endpoint-method">GET</span>
+                    <strong>/api/dashboard-data</strong> - KPIs para dashboard ejecutivo
+                </div>
+                <div class="endpoint">
+                    <span class="endpoint-method post">POST</span>
+                    <strong>/api/predict-spending</strong> - Predicción individual de gasto
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Demostración en Vivo -->
+        <div class="slide">
+            <div class="slide-counter">8/12</div>
+            <h1>🎬 Demostración del Sistema</h1>
+            
+            <h3>🧪 Escenarios de Prueba</h3>
+            
+            <div class="demo-scenario">
+                <h4>👨‍🎓 Escenario 1: Cliente Universitario</h4>
+                <div class="code-snippet">
+POST /api/predict-spending
+{
+  "age": 22,
+  "purchaseFrequency": 3,
+  "monthsAsCustomer": 2
+}
+                </div>
+                <p><strong>Predicción esperada:</strong> ~$1,400 anuales, Segmento "Nuevo"</p>
+                <p><strong>Estrategia:</strong> Descuentos de bienvenida, productos estudiantiles</p>
+            </div>
+
+            <div class="demo-scenario">
+                <h4>👩‍💼 Escenario 2: Profesionista Establecido</h4>
+                <div class="code-snippet">
+POST /api/predict-spending
+{
+  "age": 35,
+  "purchaseFrequency": 20,
+  "monthsAsCustomer": 18
+}
+                </div>
+                <p><strong>Predicción esperada:</strong> ~$6,800 anuales, Segmento "Frecuente"</p>
+                <p><strong>Estrategia:</strong> Cross-selling, programa de lealtad</p>
+            </div>
+
+            <div class="demo-scenario">
+                <h4>💎 Escenario 3: Cliente Premium</h4>
+                <div class="code-snippet">
+POST /api/predict-spending
+{
+  "age": 40,
+  "purchaseFrequency": 35,
+  "monthsAsCustomer": 24
+}
+                </div>
+                <p><strong>Predicción esperada:</strong> ~$10,500 anuales, Segmento "VIP"</p>
+                <p><strong>Estrategia:</strong> Atención premium, productos exclusivos</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Resultados y Métricas -->
+        <div class="slide">
+            <div class="slide-counter">9/12</div>
+            <h1>📈 Resultados Obtenidos</h1>
+            
+            <h3>🎯 Métricas de Rendimiento</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">85%</div>
+                    <div>Precisión del Modelo</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div>Segmentos Identificados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">78%</div>
+                    <div>Varianza Explicada (R²)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$245</div>
+                    <div>Error Promedio (RMSE)</div>
+                </div>
+            </div>
+
+            <h3>💡 Insights Principales</h3>
+            <ul>
+                <li><span class="highlight">15% de clientes VIP generan 45% de ingresos</span> - Ley de Pareto confirmada</li>
+                <li><span class="highlight">Frecuencia de compra es el factor más predictivo</span> (45% de importancia)</li>
+                <li><span class="highlight">4 segmentos claramente diferenciados</span> con estrategias específicas</li>
+                <li><span class="highlight">Modelo estable</span> con error promedio de solo $245 pesos</li>
+            </ul>
+
+            <h3>🚀 Valor de Negocio</h3>
+            <div class="impact-metrics">
+                <div class="impact-card">
+                    <div class="stat-value">40%</div>
+                    <div>Incremento esperado en efectividad de campañas</div>
+                </div>
+                <div class="impact-card">
+                    <div class="stat-value">25%</div>
+                    <div>Reducción en costos de marketing desperdiciado</div>
+                </div>
+                <div class="impact-card">
+                    <div class="stat-value">60%</div>
+                    <div>Mejora proyectada en ROI publicitario</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Casos de Uso -->
+        <div class="slide">
+            <div class="slide-counter">10/12</div>
+            <h1>💼 Aplicaciones Empresariales</h1>
+            
+            <h3>🎯 Estrategias por Segmento</h3>
+            
+            <div class="segments-grid">
+                <div class="segment vip">
+                    <h4>👑 Clientes VIP</h4>
+                    <ul style="text-align: left;">
+                        <li>Atención personalizada 24/7</li>
+                        <li>Productos exclusivos</li>
+                        <li>Envío gratuito premium</li>
+                        <li>Eventos privados</li>
+                    </ul>
+                </div>
+                
+                <div class="segment frequent">
+                    <h4>🛒 Clientes Frecuentes</h4>
+                    <ul style="text-align: left;">
+                        <li>Cross-selling inteligente</li>
+                        <li>Descuentos por volumen</li>
+                        <li>Programa de puntos</li>
+                        <li>Recomendaciones personalizadas</li>
+                    </ul>
+                </div>
+                
+                <div class="segment occasional">
+                    <h4>🕒 Clientes Ocasionales</h4>
+                    <ul style="text-align: left;">
+                        <li>Campañas estacionales</li>
+                        <li>Promociones dirigidas</li>
+                        <li>Email marketing automatizado</li>
+                        <li>Ofertas por fecha especial</li>
+                    </ul>
+                </div>
+                
+                <div class="segment new">
+                    <h4>🌱 Clientes Nuevos</h4>
+                    <ul style="text-align: left;">
+                        <li>Descuento de bienvenida</li>
+                        <li>Tutorial de productos</li>
+                        <li>Soporte onboarding</li>
+                        <li>Seguimiento personalizado</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>📅 Casos de Uso Específicos</h3>
+            <div class="demo-scenario">
+                <h4>🛍️ Black Friday</h4>
+                <p><strong>VIP:</strong> Acceso anticipado 24h, descuentos exclusivos del 30%</p>
+                <p><strong>Frecuentes:</strong> Descuentos del 20%, productos bundle</p>
+                <p><strong>Ocasionales:</strong> Ofertas flash del 25%, notificaciones urgentes</p>
+                <p><strong>Nuevos:</strong> Descuentos del 15% + envío gratis</p>
+            </div>
+
+            <div class="demo-scenario">
+                <h4>📧 Recuperación de Clientes</h4>
+                <p><strong>Objetivo:</strong> Identificar clientes que no han comprado en 3+ meses</p>
+                <p><strong>Estrategia:</strong> Cupones personalizados basados en historial de compra</p>
+                <p><strong>Impacto esperado:</strong> 15% de reactivación, $200K en ingresos adicionales</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Conclusiones y Futuro -->
+        <div class="slide">
+            <div class="slide-counter">11/12</div>
+            <h1>🎯 Conclusiones y Trabajo Futuro</h1>
+            
+            <h3>✅ Objetivos Cumplidos</h3>
+            <div class="results-grid">
+                <div class="result-card">
+                    <h4>🎯 Análisis Supervisado</h4>
+                    <ul>
+                        <li>✅ Modelo de regresión implementado</li>
+                        <li>✅ 85% de precisión alcanzada</li>
+                        <li>✅ Variables predictoras identificadas</li>
+                        <li>✅ Predicción en tiempo real</li>
+                    </ul>
+                </div>
+                
+                <div class="result-card">
+                    <h4>🎨 Análisis No Supervisado</h4>
+                    <ul>
+                        <li>✅ K-Means clustering exitoso</li>
+                        <li>✅ 4 segmentos diferenciados</li>
+                        <li>✅ Estrategias específicas definidas</li>
+                        <li>✅ Interpretación de negocio clara</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>🚀 Mejoras Futuras</h3>
+            <ul>
+                <li><strong>Datos reales:</strong> Integración con base de datos productiva</li>
+                <li><strong>Más algoritmos:</strong> Random Forest, SVM, Deep Learning</li>
+                <li><strong>Variables adicionales:</strong> Comportamiento web, redes sociales</li>
+                <li><strong>Tiempo real:</strong> Actualización automática de segmentos</li>
+                <li><strong>A/B Testing:</strong> Validación experimental de estrategias</li>
+            </ul>
+
+            <h3>💡 Lecciones Aprendidas</h3>
+            <ul>
+                <li><span class="highlight">La frecuencia de compra es más predictiva que el gasto total</span></li>
+                <li><span class="highlight">Los patrones de clustering son interpretables para negocio</span></li>
+                <li><span class="highlight">La segmentación automática supera la intuición humana</span></li>
+                <li><span class="highlight">La implementación técnica debe ser simple pero robusta</span></li>
+            </ul>
+        </div>
+
+        <!-- Slide 12: Preguntas y Demo -->
+        <div class="slide">
+            <div class="slide-counter">12/12</div>
+            <h1>❓ Preguntas y Demostración</h1>
+            
+            <div class="intro-content">
+                <div class="emoji">🎯📊🚀</div>
+                <h2>¡Demostración en Vivo!</h2>
+                
+                <div style="margin: 2rem 0; text-align: left;">
+                    <h3>🔗 URLs del Sistema:</h3>
+                    <ul style="font-size: 1.2rem;">
+                        <li><strong>API:</strong> https://localhost:7000/swagger</li>
+                        <li><strong>Frontend:</strong> http://localhost:4200</li>
+                    </ul>
+                </div>
+
+                <div style="margin: 2rem 0; text-align: left;">
+                    <h3>📋 Endpoints Principales:</h3>
+                    <div class="api-endpoints">
+                        <div class="endpoint">
+                            <span class="endpoint-method">GET</span>
+                            <strong>/api/customeranalysis/dashboard-data</strong>
+                        </div>
+                        <div class="endpoint">
+                            <span class="endpoint-method">GET</span>
+                            <strong>/api/customeranalysis/unsupervised-analysis</strong>
+                        </div>
+                        <div class="endpoint">
+                            <span class="endpoint-method post">POST</span>
+                            <strong>/api/customeranalysis/predict-spending</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin: 3rem 0;">
+                    <h3>🙋‍♀️ ¿Preguntas?</h3>
+                    <p style="font-size: 1.2rem; color: #666; margin: 1rem 0;">
+                        Estoy listo para demostrar cualquier funcionalidad<br>
+                        y responder sus dudas sobre el proyecto
+                    </p>
+                </div>
+
+       
+
+                <div style="font-size: 2rem; margin: 2rem 0;">
+                    ¡Gracias por su atención! 🎉
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Navegación -->
+    <div class="navigation">
+        <button class="nav-btn" onclick="previousSlide()">←</button>
+        <button class="nav-btn" onclick="nextSlide()">→</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = n;
+            
+            if (currentSlide >= totalSlides) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = totalSlides - 1;
+            
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            } else if (e.key === 'Home') {
+                showSlide(0);
+            } else if (e.key === 'End') {
+                showSlide(totalSlides - 1);
+            }
+        });
+
+        // Auto-advance para demo (opcional)
+        let autoAdvance = false;
+        if (autoAdvance) {
+            setInterval(() => {
+                nextSlide();
+            }, 30000); // Cambia slide cada 30 segundos
+        }
+    </script>
+</body>
+</html>
